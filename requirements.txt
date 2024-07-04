@@ -8,3 +8,4 @@ openai
 chromadb
 tiktoken
 streamlit_option_menu
+pymysql
