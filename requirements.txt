@@ -1,0 +1,10 @@
+langchain_community
+langchain==0.2.5
+pinecone_client==2.2.2
+streamlit
+unstructured
+unstructured[pdf]
+openai
+chromadb
+tiktoken
+streamlit_option_menu
