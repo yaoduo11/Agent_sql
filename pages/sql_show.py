@@ -3,16 +3,16 @@ import streamlit as st
 import sqlite3
 from Sql import sql
 import pandas as pd
-connection=mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='ydy2350149',
-    database='meeting_rooms'
-)
-cursor=connection.cursor()
+#connection=mysql.connector.connect(
+#    host='localhost',
+#    user='root',
+#    password='ydy2350149',
+ #   database='meeting_rooms'
+#)
+#cursor=connection.cursor()
 
-cursor.execute("Select * from reservations")
-data=cursor.fetchall()
+#cursor.execute("Select * from reservations")
+#data=cursor.fetchall()
 title_color = "#04256e"  # 自定义标题颜色
 header_color = "#0d3a9b"
 st.markdown(
@@ -49,16 +49,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown(f'<h1 class="stTitle">🤓SQLDatabese&Show</h1>', unsafe_allow_html=True)
 st.text("")
-df=pd.DataFrame(data,columns=cursor.column_names,)
-st.dataframe(df)
-#conn = sqlite3.connect(r'G:\Sqlite\meeting.db')
-#cursor=conn.cursor()
-#cursor.execute("Select * from reservations")
-#data=cursor.fetchall()
-#column_names = [description[0] for description in cursor.description]
-#for column in column_names:
- #   print(column)
-#st.title('streamlit MySQL Connection')
-#df=pd.DataFrame(data,columns=column_names)
+#df=pd.DataFrame(data,columns=cursor.column_names,)
 #st.dataframe(df)
+#使用sqlite3时用
+conn = sqlite3.connect(r'G:\Sqlite\meeting_rooms.db')
+cursor=conn.cursor()
+cursor.execute("Select * from reservations")
+data=cursor.fetchall()
+column_names = [description[0] for description in cursor.description]
+for column in column_names:
+    print(column)
+st.title('streamlit SQLITE Connection')
+df=pd.DataFrame(data,columns=column_names)
+st.dataframe(df)
 
