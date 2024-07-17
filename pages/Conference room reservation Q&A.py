@@ -101,8 +101,8 @@ if len(msgs.messages) == 0:
     msgs.add_ai_message("Hello, I am your conference room management assistant! I can help you book, inquire, update and delete meeting room reservations.Please tell me what is your problem?")
 
 view_messages = st.expander("View the message contents in session state")
-db=sql()
-#db=SQLDatabase.from_uri("sqlite:///G:\Sqlite\meeting.db")
+#db=sql()
+db=SQLDatabase.from_uri(r"sqlite:///G:\Sqlite\meeting_rooms.db")
 print(db.table_info)
 llm=Kimi()
 #print(db.table_info)
@@ -118,7 +118,7 @@ examples = [
     },
     {
         "input": "Help me book a C101 meeting room for me.",
-        "query": "INSERT INTO reservations (room_number, user_name, start_time, end_time) VALUES ('C101', 'me', CURDATE(), CURDATE() + INTERVAL 1 HOUR);",
+        "query": "INSERT INTO reservations (room_number, user_name, start_time, end_time) VALUES ('C101', 'me', datetime('now'), datetime('now', '+1 hour'));",
     },
     {
         "input": "Help me delete the conference room I just booked A1022.",
@@ -146,11 +146,11 @@ examples = [
     },
     {
         "input": "How many people can conference room A1022 accommodate?",
-        "query": "SELECT `capacity` FROM `rooms` WHERE `room_number` = 'A1022';",
+        "query": "SELECT capacity FROM rooms WHERE room_number = 'A1022';",
     },
     {
         "input": "Help me find a meeting room in the library.",
-        "query":"SELECT `room_number`, `capacity`, `room_type` FROM `rooms` WHERE `location` LIKE '%library%' AND `is_available` = 1 LIMIT 5,"
+        "query":"SELECT `room_number`, `capacity`, `room_type` FROM `rooms` WHERE `location` LIKE '%library%' AND `is_available` = 1 LIMIT 5;"
     },
     {
         "input": " Please Help me delete the conference room with id=97.",
@@ -165,7 +165,7 @@ examples = [
         "query": "UPDATE reservations SET room_number = 'H202'WHERE reserved_id = 97;",
     },
 ]
-system=("Please answer the corresponding question by writing MySQL code, using the following database table information:{info} \n"
+system=("Please answer the corresponding question by writing SQLite  code, using the following database table information:{info} \n"
         "The question is: {input}\n"
         "Ensure the SQL query is correct and does not include any table aliases (like 'r.' or 'res.').\n"
         "Ensure the SQL code is correct, and includes no additional text.\n"
@@ -178,7 +178,7 @@ system=("Please answer the corresponding question by writing MySQL code, using t
 example_prompt = ChatPromptTemplate.from_template("{input}\nSQL code: {query}")
 embeddings =BaichuanTextEmbeddings(baichuan_api_key="sk-f10e1b6e67585b28f774c8cb06a992dd")
 #embeddings=FakeEmbeddings(size=1536)
-vectorstore = Chroma()
+vectorstore= Chroma()
 vectorstore.delete_collection()
 example_selector=SemanticSimilarityExampleSelector.from_examples(
     examples,
@@ -231,7 +231,7 @@ def get_sql(x):
     return x.strip()
 import ast
 def get_id():
-    result = db.run("SELECT LAST_INSERT_ID() AS id;")
+    result = db.run("SELECT last_insert_rowid();")
     # 将字符串解析为列表
     result_list = ast.literal_eval(result)
     # 提取 id 值
